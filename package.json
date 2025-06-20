@@ -2,7 +2,7 @@
   "name": "quiz-generator",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/server.js",
   "type": "module",
   "scripts": {
     "dev": "tsx watch --env-file=.env src/server.ts",
@@ -27,7 +27,6 @@
     "chalk": "^5.4.1",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "express-rate-limit": "^7.5.0",
     "mongoose": "^8.16.0",
     "openai": "^5.5.1",
     "tsx": "^4.20.3",
