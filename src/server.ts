@@ -59,7 +59,7 @@ app.post('/questions', async (req: QuestionsRequest, res) => {
     if (!quizForFile) {
       quizForFile = await QuizForFile.create({ path: url, sha });
     }
-    questions = result.finalOutput?.questions;
+    questions = result.finalOutput?.questions.questions;
     cloze = result.finalOutput?.cloze;
     quizForFile.questions = questions;
     quizForFile.cloze = cloze;
