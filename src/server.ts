@@ -30,7 +30,9 @@ const QuizForFile = mongoose.model(
   })
 );
 
-const octokit = new Octokit();
+const octokit = new Octokit({
+  auth: process.env.GH_TOKEN,
+});
 
 const OWNER = 'StephanUllmann';
 const REPO = 'md-test';
