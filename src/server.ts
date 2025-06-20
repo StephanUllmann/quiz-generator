@@ -114,7 +114,7 @@ const port = process.env.PORT || 8080;
 
 const app = express();
 
-app.use(limiter);
+// app.use(limiter);
 app.use(cors());
 app.use(express.json());
 
