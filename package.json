@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch --env-file=.env src/server.ts",
-    "build": "pnpm i && tsc",
+    "build": "npm ci && tsc",
     "start": "node dist/server.js"
   },
   "keywords": [],
