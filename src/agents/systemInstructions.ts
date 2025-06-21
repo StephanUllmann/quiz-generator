@@ -13,7 +13,6 @@ Formulate clear and concise questions.
 Ensure choices include one unequivocally correct answer and plausible, but incorrect, distractors.
 The id for choices and answers should be a unique number within that question's choices.
 Output Structure: Populate the questions array of the Quiz object with question (string), choices (array of objects with id and text), and answer (object with id and text) for each question.
-
     `;
 
 const clozeGeneratorInstructions = `Agent Persona and Goal
@@ -25,16 +24,26 @@ Cloze Test Generation
 For the cloze object in the schema, adhere to these specific instructions:
 
 Source: The cloze test must be created from the provided file. You can change the overall phrasing, but keywords must remain the same.
+
 textWithBlanks:
-Create a passage based on the file, no longer than 300 words.
+Create a passage based on the file, no longer than 200 words.
 It can be rephrased slightly, but keywords must remain as they are.
-Crucially, do not include any code examples or Markdown formatting (e.g., #, ##, *, **, ~, \`\`\` - three backticks). Provide plain text only.
-You must avoid any special characters. 
-Identify and remove critical keywords or phrases, replacing each with the placeholder [BLANK]. Ensure these blanks represent essential information from the passage.
-blanks Array:
-Collect all the exact text snippets that were removed and replaced with [BLANK] in the textWithBlanks.
-Add 3 additional, plausible "red herring" words or phrases to this array. These should be related to the topic but not actual missing words from the textWithBlanks.
-solution:
-Provide a complete and accurate version of the textWithBlanks where all [BLANK] placeholders are filled with their correct corresponding text snippets. This solution must exactly match the original passage's content and flow.`;
+Identify critical keywords an wrap them in this special markings: %%keyword:example%%.
+Here is an example:
+"%%keyword:JavaScript%% functions do not require you to declare types for input or output values. This sometimes leads to confusion, as functions like addNumbers might be misused. TypeScript solves this by requiring both %%keyword:parameter and return types%% to be specified. If arguments of a different type such as string are passed, %%keyword:TypeScript%% shows an error. TypeScript checks arguments during %%keyword:build time%% and provides %%keyword:type inference%%."
+If you include Markdown for highlighting and code snippets, stick to GitHub flavored markdown. 
+Code blocks are not allowed to contain keyword markings.
+
+redHerrings Array:
+Add 3-5 additional, plausible "red herring" words or phrases to this array, that could serve as possible solutions to the blanks. These should be related to the topic but not actual missing words from the textWithBlanks.
+`;
 
 export { questionsGeneratorInstructions, clozeGeneratorInstructions };
+
+// Identify and remove critical keywords or phrases, replacing each with the placeholder [BLANK]. Ensure these blanks represent essential information from the passage.
+
+// solution:
+// Provide a complete and accurate version of the textWithBlanks where all [BLANK] placeholders are filled with their correct corresponding text snippets. This solution must exactly match the original passage's content and flow.
+
+// Crucially, do not include any code examples or Markdown formatting (e.g., #, ##, *, **, ~, \`\`\` - three backticks). Provide plain text only.
+// You must avoid any special characters.

@@ -1,100 +1,112 @@
-import { Agent, OutputGuardrail, OutputGuardrailResult, OutputGuardrailTripwireTriggered, run } from '@openai/agents';
-import { google } from '@ai-sdk/google';
-import { aisdk } from '@openai/agents-extensions';
-import { z } from 'zod';
+import type {
+	OutputGuardrailResult,
+	OutputGuardrailTripwireTriggered,
+	OutputGuardrail,
+} from "@openai/agents";
+import { Agent, run } from "@openai/agents";
+import { google } from "@ai-sdk/google";
+import { aisdk } from "@openai/agents-extensions";
+import { z } from "zod";
 
-import { clozeGeneratorInstructions, questionsGeneratorInstructions } from './systemInstructions.js';
+import {
+	clozeGeneratorInstructions,
+	questionsGeneratorInstructions,
+} from "./systemInstructions.js";
 
-const geminiModel = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+const geminiModel = process.env.GEMINI_MODEL || "gemini-2.0-flash";
 
 const gemini = aisdk(google(geminiModel));
 
 const Questions = z.object({
-  questions: z.array(
-    z.object({
-      question: z.string(),
-      choices: z.array(
-        z.object({
-          id: z.number(),
-          text: z.string(),
-        })
-      ),
-      answer: z.object({
-        id: z.number(),
-        text: z.string(),
-      }),
-    })
-  ),
+	questions: z.array(
+		z.object({
+			question: z.string(),
+			choices: z.array(
+				z.object({
+					id: z.number(),
+					text: z.string(),
+				}),
+			),
+			answer: z.object({
+				id: z.number(),
+				text: z.string(),
+			}),
+		}),
+	),
 });
 
+// solution: z.string(),
 const Cloze = z.object({
-  textWithBlanks: z.string(),
-  solution: z.string(),
-  blanks: z.array(z.string()),
+	textWithBlanks: z.string(),
+	redHerrings: z.array(z.string()),
 });
 
 const Quiz = z.object({
-  questions: Questions,
-  cloze: Cloze,
+	questions: Questions,
+	cloze: Cloze,
 });
 
 type QuizOutput = z.infer<typeof Quiz>;
 
 const questionsGenerator = new Agent({
-  name: 'Question Generator',
-  instructions: questionsGeneratorInstructions,
-  // model: gemini,
-  outputType: Questions,
+	name: "Question Generator",
+	instructions: questionsGeneratorInstructions,
+	// model: gemini,
+	outputType: Questions,
 });
 
 const questionsTool = questionsGenerator.asTool({
-  toolName: 'generate_questions',
-  toolDescription: 'Generate multiple choice questions based on a given text.',
+	toolName: "generate_questions",
+	toolDescription: "Generate multiple choice questions based on a given text.",
 });
 
 const clozeGenerator = new Agent({
-  name: 'Cloze Generator',
-  instructions: clozeGeneratorInstructions,
-  // model: gemini,
-  outputType: Cloze,
+	name: "Cloze Generator",
+	instructions: clozeGeneratorInstructions,
+	// model: gemini,
+	outputType: Cloze,
 });
 
 const clozeTool = clozeGenerator.asTool({
-  toolName: 'generate_cloze_exercise',
-  toolDescription: 'Generate a fill-in-the-blanks exercise, a cloze, from a given text.',
+	toolName: "generate_cloze_exercise",
+	toolDescription:
+		"Generate a fill-in-the-blanks exercise, a cloze, from a given text.",
 });
 
 const clozeOutputGuardrailAgent = new Agent({
-  name: 'Cloze Check',
-  instructions:
-    'Check if the cloze exercise complies to the instructions. The cloze generator received these instructions: \n' +
-    clozeGeneratorInstructions,
-  outputType: z.object({
-    isValidCloze: z.boolean(),
-    reasoning: z.string(),
-  }),
+	name: "Cloze Check",
+	instructions: `Check if the cloze exercise complies to the instructions. The cloze generator received these instructions: \n${clozeGeneratorInstructions}`,
+	outputType: z.object({
+		isValidCloze: z.boolean(),
+		reasoning: z.string(),
+	}),
 });
 
 const clozeOutputGuardrail: OutputGuardrail<typeof Quiz> = {
-  name: 'Cloze Output Check',
-  execute: async ({ agentOutput, context }) => {
-    const res = await run(clozeOutputGuardrailAgent, JSON.stringify(agentOutput.cloze), { context });
+	name: "Cloze Output Check",
+	execute: async ({ agentOutput, context }) => {
+		const res = await run(
+			clozeOutputGuardrailAgent,
+			JSON.stringify(agentOutput.cloze),
+			{ context },
+		);
 
-    return {
-      outputInfo: res.finalOutput,
-      tripwireTriggered: !res.finalOutput?.isValidCloze,
-    };
-  },
+		return {
+			outputInfo: res.finalOutput,
+			tripwireTriggered: !res.finalOutput?.isValidCloze,
+		};
+	},
 };
 
 const quizGenerator = new Agent({
-  name: 'Question Generator',
-  instructions: 'You generate a quiz based on a given file. You must use your tools to generate it.',
-  // model: gemini,
-  tools: [questionsTool, clozeTool],
-  outputType: Quiz,
-  outputGuardrails: [clozeOutputGuardrail],
-  modelSettings: { toolChoice: 'required' },
+	name: "Quiz Generator",
+	instructions:
+		"You generate a quiz based on a given file. You must use your tools to generate it.",
+	// model: gemini,
+	tools: [questionsTool, clozeTool],
+	outputType: Quiz,
+	outputGuardrails: [clozeOutputGuardrail],
+	modelSettings: { toolChoice: "required" },
 });
 
 export { quizGenerator };
