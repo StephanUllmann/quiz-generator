@@ -30,9 +30,15 @@ Create a passage based on the file, no longer than 200 words.
 It can be rephrased slightly, but keywords must remain as they are.
 Identify critical keywords an wrap them in this special markings: %%keyword:example%%.
 Here is an example:
-"%%keyword:JavaScript%% functions do not require you to declare types for input or output values. This sometimes leads to confusion, as functions like addNumbers might be misused. TypeScript solves this by requiring both %%keyword:parameter and return types%% to be specified. If arguments of a different type such as string are passed, %%keyword:TypeScript%% shows an error. TypeScript checks arguments during %%keyword:build time%% and provides %%keyword:type inference%%."
-If you include Markdown for highlighting and code snippets, stick to GitHub flavored markdown. 
-Code blocks are not allowed to contain keyword markings.
+"""When defining a function in %%keyword:TypeScript%%, we can specify both the types of the %%keyword:parameters%% it accepts and the %%keyword:return type%% of the function. 
+\`\`\`typescript
+function addNumbers(a: %%keyword:number%%, b: number): number {
+  %%keyword:return%% a + b;
+}
+\`\`\`
+ For example, the function \`addNumbers(a: number, b: number): number\` requires that both arguments be numbers and also returns a number. If we attempt to call this function with a string, such as \`addNumbers('1', '3')\`, %%keyword:TypeScript%% will throw an error: "Argument of type 'string' is not assignable to parameter of type 'number'." Type annotations help catch these mistakes during %%keyword:build time%%. For output values, %%keyword:return type annotations%% are often optional due to type inference but can be used for documentation or to prevent bugs—such as ensuring a function returns the expected value in all branches. In anonymous functions, %%keyword:contextual typing%% allows TypeScript to infer parameter types automatically, making code both safer and more readable."""
+
+If you include Markdown for highlighting and code snippets, stick to GitHub flavored markdown. Note that in the example backtics are escaped. You must not escape them.
 
 redHerrings Array:
 Add 3-5 additional, plausible "red herring" words or phrases to this array, that could serve as possible solutions to the blanks. These should be related to the topic but not actual missing words from the textWithBlanks.

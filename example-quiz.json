@@ -1,0 +1,145 @@
+{
+	"_id": {
+		"$oid": "6856e1118dda20ecdde166b1"
+	},
+	"path": "some%20nested%20directory%2Fanother-file.md",
+	"sha": "ceb741a90abf109c303c9d7e3b333bdabea0bb9f",
+	"__v": 1,
+	"cloze": {
+		"textWithBlanks": "When defining a function in %%keyword:TypeScript%%, we can specify both the types of the %%keyword:parameters%% it accepts and the %%keyword:return type%% of the function. \n```typescript\nfunction addNumbers(a: %%keyword:number%%, b: number): number {\n  %%keyword:return%% a + b;\n}\n```\n For example, the function `addNumbers(a: number, b: number): number` requires that both arguments be numbers and also returns a number. If we attempt to call this function with a string, such as `addNumbers('1', '3')`, %%keyword:TypeScript%% will throw an error: \"Argument of type 'string' is not assignable to parameter of type 'number'.\" Type annotations help catch these mistakes during %%keyword:build time%%. For output values, %%keyword:return type annotations%% are often optional due to type inference but can be used for documentation or to prevent bugs—such as ensuring a function returns the expected value in all branches. In anonymous functions, %%keyword:contextual typing%% allows TypeScript to infer parameter types automatically, making code both safer and more readable.",
+		"redHerrings": [
+			"JavaScript",
+			"props",
+			"object destructuring",
+			"class components",
+			"CSS modules"
+		]
+	},
+	"questions": [
+		{
+			"question": "What does adding type annotations to function parameters in TypeScript accomplish?",
+			"choices": [
+				{
+					"id": 1,
+					"text": "They specify the types of arguments the function accepts."
+				},
+				{
+					"id": 2,
+					"text": "They specify the exact value to use as a parameter."
+				},
+				{
+					"id": 3,
+					"text": "They force the function to always return a string."
+				},
+				{
+					"id": 4,
+					"text": "They make the function asynchronous."
+				}
+			],
+			"answer": {
+				"id": 1,
+				"text": "They specify the types of arguments the function accepts."
+			}
+		},
+		{
+			"question": "What error would TypeScript produce if you attempt to call addNumbers('1', '3') when the function expects parameters of type number?",
+			"choices": [
+				{
+					"id": 1,
+					"text": "Argument of type 'string' is not assignable to parameter of type 'number'."
+				},
+				{
+					"id": 2,
+					"text": "Function addNumbers does not exist."
+				},
+				{
+					"id": 3,
+					"text": "Numbers cannot be added to strings."
+				},
+				{
+					"id": 4,
+					"text": "There would be no error; TypeScript will convert the strings to numbers."
+				}
+			],
+			"answer": {
+				"id": 1,
+				"text": "Argument of type 'string' is not assignable to parameter of type 'number'."
+			}
+		},
+		{
+			"question": "Why might you want to include an explicit return type annotation in a TypeScript function?",
+			"choices": [
+				{
+					"id": 1,
+					"text": "To improve documentation and catch return type bugs early."
+				},
+				{
+					"id": 2,
+					"text": "To allow the function to return multiple types."
+				},
+				{
+					"id": 3,
+					"text": "To disable type checking for the function."
+				},
+				{
+					"id": 4,
+					"text": "To make the function run faster."
+				}
+			],
+			"answer": {
+				"id": 1,
+				"text": "To improve documentation and catch return type bugs early."
+			}
+		},
+		{
+			"question": "What issue is present in the following function, according to the provided explanation?\n\nfunction isOldEnough(age: number): string {\n  if (age >= 18) {\n    return 'You are old enough.';\n  }\n}",
+			"choices": [
+				{
+					"id": 1,
+					"text": "It might return undefined if the argument is less than 18."
+				},
+				{
+					"id": 2,
+					"text": "It always returns a boolean."
+				},
+				{
+					"id": 3,
+					"text": "It never returns anything."
+				},
+				{
+					"id": 4,
+					"text": "It always throws an error."
+				}
+			],
+			"answer": {
+				"id": 1,
+				"text": "It might return undefined if the argument is less than 18."
+			}
+		},
+		{
+			"question": "According to the material, when is it NOT necessary to manually specify the types of parameters in anonymous functions in TypeScript?",
+			"choices": [
+				{
+					"id": 1,
+					"text": "When TypeScript can infer the parameter type via Contextual Typing."
+				},
+				{
+					"id": 2,
+					"text": "When the function does not take any parameters."
+				},
+				{
+					"id": 3,
+					"text": "When the function returns void."
+				},
+				{
+					"id": 4,
+					"text": "When the function is declared with the function keyword."
+				}
+			],
+			"answer": {
+				"id": 1,
+				"text": "When TypeScript can infer the parameter type via Contextual Typing."
+			}
+		}
+	]
+}
