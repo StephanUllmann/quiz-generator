@@ -1,3 +1,3 @@
-import { quizGenerator } from './gemini.js';
+import { quizGenerator } from "./agents.js";
 
 export { quizGenerator };

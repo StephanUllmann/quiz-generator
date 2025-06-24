@@ -1,12 +1,14 @@
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
+import type { OctokitResponse } from "@octokit/types";
+import { RequestError } from "@octokit/request-error";
 import chalk from "chalk";
 import cors from "cors";
 import { OutputGuardrailTripwireTriggered, run, user } from "@openai/agents";
 import { quizGenerator } from "./agents/index.js";
 
-import QuizForFile from "./db/index.js";
-import { octokit, OWNER, REPO } from "./utils/index.js";
+import QuizForFile, { QuizForFileSchema } from "./db/index.js";
+import { HttpError, octokit, OWNER, REPO } from "./utils/index.js";
 
 const port = process.env.PORT || 8080;
 
@@ -34,14 +36,21 @@ app.post("/questions", async (req: QuestionsRequest, res) => {
 
 	const quizForFilePromise = QuizForFile.findOne({ path: url });
 
-	let [file, quizForFile] = await Promise.all([
-		filePromise,
-		quizForFilePromise,
-	]);
+	let file: OctokitResponse<GitHubFileContent, number>;
+	let quizForFile: IQuizForFile | null;
+	try {
+		[file, quizForFile] = await Promise.all([filePromise, quizForFilePromise]);
+	} catch (error) {
+		console.log(error);
+		if (error instanceof RequestError && error.status === 404)
+			throw new HttpError(`File not found on path: ${url}`, { status: 404 });
+		throw error;
+	}
+
 	const sha = file.data.sha;
 
-	let questions;
-	let cloze;
+	let questions: QuestionsType["questions"];
+	let cloze: ClozeType;
 	if (quizForFile && quizForFile.sha === sha) {
 		console.log("RETURNING FROM DB!");
 		questions = quizForFile.questions;
@@ -53,7 +62,8 @@ app.post("/questions", async (req: QuestionsRequest, res) => {
 		);
 
 		//
-		let result;
+		// let result: Awaited<ReturnType<typeof run>>;
+		let result: any;
 		try {
 			result = await run(quizGenerator, fileContent);
 		} catch (error) {
@@ -68,8 +78,9 @@ app.post("/questions", async (req: QuestionsRequest, res) => {
 		if (!quizForFile) {
 			quizForFile = await QuizForFile.create({ path: url, sha });
 		}
-		questions = result.finalOutput?.questions.questions;
-		cloze = result.finalOutput?.cloze;
+		questions = result.finalOutput?.questions
+			.questions as QuestionsType["questions"];
+		cloze = result.finalOutput?.cloze as ClozeType;
 		quizForFile.questions = questions;
 		quizForFile.cloze = cloze;
 		quizForFile.sha = sha;
@@ -100,7 +111,7 @@ app.post("/info", async (req, res) => {
 
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
 	console.log(err);
-	res.status(err.cause?.status || 500).json({ message: err.message });
+	res.status(err.cause.status || 500).json({ message: err.message });
 });
 
 app.listen(port, () =>

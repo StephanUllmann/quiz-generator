@@ -8,6 +8,8 @@ import { google } from "@ai-sdk/google";
 import { aisdk } from "@openai/agents-extensions";
 import { z } from "zod";
 
+import { Quiz, Questions, Cloze } from "src/schemas/schemas.js";
+
 import {
 	clozeGeneratorInstructions,
 	questionsGeneratorInstructions,
@@ -16,37 +18,6 @@ import {
 const geminiModel = process.env.GEMINI_MODEL || "gemini-2.0-flash";
 
 const gemini = aisdk(google(geminiModel));
-
-const Questions = z.object({
-	questions: z.array(
-		z.object({
-			question: z.string(),
-			choices: z.array(
-				z.object({
-					id: z.number(),
-					text: z.string(),
-				}),
-			),
-			answer: z.object({
-				id: z.number(),
-				text: z.string(),
-			}),
-		}),
-	),
-});
-
-// solution: z.string(),
-const Cloze = z.object({
-	textWithBlanks: z.string(),
-	redHerrings: z.array(z.string()),
-});
-
-const Quiz = z.object({
-	questions: Questions,
-	cloze: Cloze,
-});
-
-type QuizOutput = z.infer<typeof Quiz>;
 
 const questionsGenerator = new Agent({
 	name: "Question Generator",
@@ -110,10 +81,3 @@ const quizGenerator = new Agent({
 });
 
 export { quizGenerator };
-
-// import { OpenAI } from 'openai';
-
-// const ai = new OpenAI({
-//   apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-//   baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-// });

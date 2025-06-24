@@ -28,6 +28,7 @@ Source: The cloze test must be created from the provided file. You can change th
 textWithBlanks:
 Create a passage based on the file, no longer than 200 words.
 It can be rephrased slightly, but keywords must remain as they are.
+If applicable include code snippets in the text and create blanks in them.
 Identify critical keywords an wrap them in this special markings: %%keyword:example%%.
 Here is an example:
 """When defining a function in %%keyword:TypeScript%%, we can specify both the types of the %%keyword:parameters%% it accepts and the %%keyword:return type%% of the function. 
