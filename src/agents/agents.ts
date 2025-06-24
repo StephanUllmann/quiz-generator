@@ -8,7 +8,7 @@ import { google } from "@ai-sdk/google";
 import { aisdk } from "@openai/agents-extensions";
 import { z } from "zod";
 
-import { Quiz, Questions, Cloze } from "src/schemas/schemas.js";
+import { Quiz, Questions, Cloze } from "../schemas/schemas.js";
 
 import {
 	clozeGeneratorInstructions,
